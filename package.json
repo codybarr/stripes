@@ -1,0 +1,38 @@
+{
+  "name": "@nosweat/stripes",
+  "version": "0.1.0",
+  "description": "Browser-only WebUSB label printing for the Zebra ZD411 (203 dpi)",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "bun build ./index.ts --target browser --format esm --outdir dist && bunx tsc -p tsconfig.build.json",
+    "typecheck": "bunx tsc --noEmit",
+    "fmt": "biome format --write .",
+    "test": "bun test",
+    "example": "bun examples/serve.ts",
+    "prepublishOnly": "bun run typecheck && bun test && bun run build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
+    "@types/bun": "latest",
+    "typescript": "^5.9.3"
+  }
+}

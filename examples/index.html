@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>stripes / printer bench</title>
+    <style>
+    :root {
+      color-scheme: light;
+      --ink: #151716;
+      --muted: #535b56;
+      --rule: #cbd1cc;
+      --accent: #166a43;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: #f6f8f6;
+      color: var(--ink);
+      font:
+        16px / 1.5 ui-monospace,
+        monospace;
+    }
+    main {
+      max-width: 900px;
+      padding: 40px 24px;
+      margin: auto;
+    }
+    header {
+      border-bottom: 3px solid var(--ink);
+      padding-bottom: 20px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    h1 {
+      font-size: 32px;
+      margin: 0;
+    }
+    h2 {
+      font-size: 18px;
+      margin: 0 0 16px;
+    }
+    header span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    section {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .status {
+      margin-bottom: 18px;
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 8px;
+    }
+    .status dt {
+      color: var(--muted);
+    }
+    .status dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+    button,
+    input,
+    select {
+      font: inherit;
+      border: 1px solid var(--rule);
+      border-radius: 3px;
+      padding: 9px 12px;
+      min-height: 44px;
+      background: white;
+      color: var(--ink);
+      max-width: 100%;
+    }
+    button {
+      cursor: pointer;
+      border-color: var(--ink);
+    }
+    button.primary {
+      background: var(--ink);
+      color: white;
+    }
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    button:not(:disabled):hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    button.primary:not(:disabled):hover {
+      background: var(--accent);
+      color: white;
+    }
+    :focus-visible {
+      outline: 3px solid #337dcd;
+      outline-offset: 3px;
+    }
+    .label {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      aspect-ratio: 2 / 1;
+      border: 1px solid var(--rule);
+      background: white;
+      image-rendering: pixelated;
+    }
+    figcaption {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+    figure {
+      margin: 0;
+    }
+    #result {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      min-height: 80px;
+      font-size: 13px;
+      margin: 0;
+    }
+    #environment {
+      font-size: 13px;
+      color: #a02c1f;
+      margin: 16px 0 0;
+    }
+    @media (max-width: 600px) {
+      main {
+        padding: 24px 16px;
+      }
+      .label {
+        grid-template-columns: 1fr;
+      }
+      .status {
+        grid-template-columns: 100px 1fr;
+      }
+    }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>stripes /</h1>
+        <span>ZD411 · 203 dpi · printer bench</span>
+      </header>
+      <p id="environment" role="status"></p>
+      <section aria-labelledby="connection-heading">
+        <h2 id="connection-heading">01 / Connection</h2>
+        <dl class="status" aria-live="polite">
+          <dt>USB</dt>
+          <dd id="connection">disconnected</dd>
+          <dt>Device</dt>
+          <dd id="device">—</dd>
+          <dt>Readiness</dt>
+          <dd id="readiness">unknown</dd>
+        </dl>
+        <div class="row">
+          <button id="connect" class="primary">Connect printer</button>
+          <button id="discover">Find authorized</button>
+          <select id="devices" aria-label="Authorized printer">
+            <option value="">No devices listed</option>
+          </select>
+          <button id="reconnect" disabled>Reconnect selected</button>
+          <button id="disconnect" disabled>Disconnect</button>
+        </div>
+      </section>
+      <section aria-labelledby="label-heading">
+        <h2 id="label-heading">02 / Label · 50.8 × 25.4 mm</h2>
+        <div class="label">
+          <div>
+            <label
+              >Text<input id="text" value="STRIPES TEST" maxlength="30"></label
+            >
+            <label
+              >Print speed<select id="speed">
+                <option value="">Leave unchanged</option>
+                <option value="2">2 inches/second</option>
+                <option value="6">6 inches/second</option>
+              </select></label
+            >
+          </div>
+          <figure>
+            <canvas id="preview" width="406" height="203"></canvas>
+            <figcaption>Graphic preview · 406 × 203 dots</figcaption>
+          </figure>
+        </div>
+        <div class="row">
+          <button id="status" disabled>Read status</button>
+          <button id="read-speed" disabled>Read speed</button>
+          <button id="print-text" class="primary" disabled>
+            Print text label
+          </button>
+          <button id="print-graphic" disabled>Print graphic</button>
+        </div>
+      </section>
+      <section aria-labelledby="result-heading">
+        <h2 id="result-heading">03 / Last result</h2>
+        <pre id="result" role="status">No jobs sent.</pre>
+      </section>
+    </main>
+    <script type="module" src="./app.ts"></script>
+  </body>
+</html>
